@@ -5,6 +5,8 @@ from PIL import Image
 import sqlite3 as q
 
 t = CTk()
+# t.overrideredirect(True)
+t.attributes("-alpha", 0.6)
 t.geometry(f"900x600+300+150")
 t.resizable(False, False)
 t.title("Parch Profiler")
@@ -36,8 +38,11 @@ def ch_sm() :
 
 
 def settings() :
+    t.withdraw()
     sw = CTkToplevel(t)
+    sw.bind("<Destroy>", lambda x : t.deiconify())
     sw.geometry("+750+250")
+
     sw.resizable(False, False)
 
     def chth(choice) :
@@ -48,7 +53,6 @@ def settings() :
         lbl.grid(padx=10, pady=10)
 
     def chfnt() :
-        t.withdraw()
         sw.withdraw()
         if font := askfont(apear_tab, "choose font") :
             conn = q.connect("database.db")
@@ -58,11 +62,10 @@ def settings() :
             cur.execute(f"UPDATE font SET effect='{font['weight']}'")
             conn.commit()
             conn.close()
-
-        t.deiconify()
+            lbl.grid(padx=10, pady=10)
         sw.deiconify()
 
-    apear_tab = CTkTabview(sw, corner_radius=20, width=100, height=90)
+    apear_tab = CTkTabview(sw, width=300, height=300)
     apear_tab.add("settings")
     apear_tab.add("appearance")
     lbl = CTkLabel(sw, text="restart to apply")
@@ -70,10 +73,12 @@ def settings() :
     values.append("dark-blue")
     values.append("blue")
     values.append("green")
-    ts = CTkOptionMenu(apear_tab.tab("appearance"), values=values, anchor="center", command=chth)
+    ts = CTkOptionMenu(apear_tab.tab("appearance"), font=font, values=values, anchor="center", corner_radius=10, command=chth)
     ts.set(color)
-    CTkButton(apear_tab.tab("appearance"), text="choose font".title(), command=chfnt).grid()
-    ts.grid(padx=20, pady=20)
+    ts.grid(padx=80, pady=50)
+
+    apear_tab.add("font")
+    CTkButton(apear_tab.tab("font"), text="choose font".title(), font=font, corner_radius=999, command=chfnt).grid(padx=80, pady=50)
 
     apear_tab.grid()
     sw.mainloop()
@@ -82,20 +87,21 @@ def settings() :
 chfr_frame = CTkScrollableFrame(t, corner_radius=0, height=600, width=150)
 chfr_frame.grid(row=0, rowspan=2, column=0)
 settings_frame = CTkFrame(chfr_frame)
-CTkLabel(settings_frame, text="Parch Profiler", font=font).grid(row=0, column=0, padx=10)
-CTkButton(settings_frame, text="", width=1, corner_radius=999, image=CTkImage(
+CTkLabel(settings_frame, text="Parch Profiler").grid(row=0, column=0, padx=10, pady=(10, 20))
+settings_btn = CTkButton(settings_frame, text="", width=1, font=font, corner_radius=999, image=CTkImage(
     Image.open("/home/ghost/parch-profiler-stable/GUI/CTkThemesPack/images/settings.png")),
-          command=settings).grid(row=0, column=1, pady=10)
+          command=settings)
+settings_btn.grid(row=0, column=1, pady=(0, 10))
 settings_frame.grid(row=0, column=0)
-CTkButton(chfr_frame, text="Parch Profile Stable", command=ch_pps).grid(row=1, column=0, pady=5)
-CTkButton(chfr_frame, text="Software Managers", command=ch_sm).grid(row=2, column=0, pady=5)
+CTkButton(chfr_frame, text="Software Managers", font=font, corner_radius=999, command=ch_sm).grid(row=1, column=0, pady=5)
+CTkButton(chfr_frame, text="Parch Profile Stable", font=font, corner_radius=999, command=ch_pps).grid(row=2, column=0, pady=5)
 
 plcholder_drame = CTkFrame(t, corner_radius=0, height=28, width=526)
 plcholder_drame.grid(row=1, column=1)
 
 btn_frame = CTkFrame(t, corner_radius=0)
 btn_frame.grid(row=1, column=2)
-bl = CTkButton(btn_frame, text="load", width=60);bl.grid(row=1, column=1, padx=5)
+bl = CTkButton(btn_frame, text="import", width=60);bl.grid(row=1, column=1, padx=5)
 be = CTkButton(btn_frame, text="export", width=60);be.grid(row=1, column=2, padx=5)
 ba = CTkButton(btn_frame, text="apply", width=60);ba.grid(row=1, column=3, padx=5)
 
@@ -105,10 +111,10 @@ content_frame.grid(row=0, column=1, columnspan=2)
 softwaremgr_frame = CTkFrame(content_frame)
 softwaremgr_frame.grid(row=0, column=1, columnspan=3, padx=(250, 0), pady=(170, 0))
 bl = CTkLabel(softwaremgr_frame, text="Select your software manager");bl.grid(padx=10, pady=10)
-bl = CTkButton(softwaremgr_frame, text="pacman ➜");bl.grid(padx=10, pady=10)
-be = CTkButton(softwaremgr_frame, text="AUR ➜");be.grid(padx=10, pady=10)
-ba = CTkButton(softwaremgr_frame, text="FlatPak ➜");ba.grid(padx=10, pady=10)
+bl = CTkButton(softwaremgr_frame, text="pacman ➜", font=font, corner_radius=999);bl.grid(padx=10, pady=10)
+be = CTkButton(softwaremgr_frame, text="AUR ➜", font=font, corner_radius=999);be.grid(padx=10, pady=10)
+ba = CTkButton(softwaremgr_frame, text="FlatPak ➜", font=font, corner_radius=999);ba.grid(padx=10, pady=10)
 
-profmgr_frame = CTkFrame(content_frame, fg_color="red")
+profmgr_frame = CTkFrame(content_frame, fg_color="yellow")
 
 t.mainloop()
