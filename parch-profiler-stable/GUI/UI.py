@@ -5,7 +5,6 @@ from PIL import Image
 import sqlite3 as q
 
 t = CTk()
-# t.overrideredirect(True)
 t.attributes("-alpha", 0.6)
 t.geometry(f"900x600+300+150")
 t.resizable(False, False)
